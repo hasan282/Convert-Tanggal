@@ -1,16 +1,18 @@
 package converttanggal;
 
+import java.time.LocalDate;
+import java.time.Period;
+
 public class FnTanggal {
     public static String Convert(int Tipe, String Target) {
         String ListBulan = "Januari@@Februari@@Maret@@April@@Mei@@Juni@@Juli@@Agustus@@September@@Oktober@@November@@Desember";
         String BulanEng = "January@@February@@March@@April@@May@@June@@July@@August@@September@@October@@November@@December";
         String NmbMonth = "01@@02@@03@@04@@05@@06@@07@@08@@09@@10@@11@@12";
         String[] NoBulan = NmbMonth.split("@@");
-        String[] Bulan;
-        String Result;
-        switch (Tipe) {
-            case 0:
-                Result = null;break;
+        String[] Bulan; String Result;
+        int Thn, Bln, Hri;
+        LocalDate NowTime = LocalDate.now();
+        switch (Tipe) {case 0:Result = null;break;
             case 10:
                 // Convert : 28-02-2019 --> 2019-02-28
                 // Convert : 2019-02-28 --> 28-02-2019
@@ -78,6 +80,18 @@ public class FnTanggal {
                 {Bulan = ListBulan.split("@@");String[] Tanggal = Target.split("\\s+");String Month = null;
                 for(int b = 0; b <= Bulan.length; b++){if(Tanggal[1].equals(Bulan[b])){Month = NoBulan[b];break;}}
                 Result = Month + "-" + Tanggal[0] + "-" + Tanggal[2];break;}
+            case 50:
+                // Convert : 28-02-2019 --> Umur : xx Tahun xx Bulan xx Hari
+                {String[] Tanggal = Target.split("-");Hri = Integer.parseInt(Tanggal[0]);Bln = Integer.parseInt(Tanggal[1]);
+                Thn = Integer.parseInt(Tanggal[2]);LocalDate SpcTime = LocalDate.of(Thn,Bln,Hri);
+                Period Dif = Period.between(SpcTime,NowTime);
+                Result = "Umur "+Dif.getYears()+" Tahun "+Dif.getMonths()+" Bulan "+Dif.getDays()+" Hari";break;}
+            case 51:
+                // Convert : 2019-02-28 --> 28 Februari 2019 (xx Tahun)
+                {Bulan = ListBulan.split("@@");String[] Tanggal = Target.split("-");Hri = Integer.parseInt(Tanggal[2]);
+                Bln = Integer.parseInt(Tanggal[1]);Thn = Integer.parseInt(Tanggal[0]);int Month = Integer.parseInt(Tanggal[1]);
+                LocalDate SpcTime = LocalDate.of(Thn,Bln,Hri);Period Dif = Period.between(SpcTime,NowTime);
+                Result = Tanggal[2]+" "+Bulan[Month-1]+" "+Tanggal[0]+" ("+Dif.getYears()+" Tahun)";break;}
             default:
                 Result = null;
                 break;
